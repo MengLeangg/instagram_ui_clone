@@ -27,9 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Color(0xFFEEEEEE),
       brightness: Brightness.light,
       centerTitle: true,
-      title: Text(
-        "Instagram",
-        style: TextStyle(color: Colors.black),
+      title: Image.asset(
+        'assets/images/logo.png',
+        fit: BoxFit.cover,
+        height: 50.0,
       ),
       leading: IconButton(
         onPressed: () {},
@@ -121,6 +122,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+//                Positioned(
+//                  top: 10.0,
+//                  right: 10.0,
+//                  child: CircleAvatar(
+//                    backgroundColor: Colors.blue,
+//                    radius: 10.0,
+//                    child: Icon(Icons.add, size: 14.0, color: Colors.white,),
+//                  ),
+//                ),
                 SizedBox(
                   height: 5,
                 ),
@@ -131,6 +141,42 @@ class _HomeScreenState extends State<HomeScreen> {
         )
     );
   }
+
+  postCheck(Post posts){
+    if(posts.postImages.length > 1){
+      return Container(
+        height: 400,
+        child: PageView.builder(
+          itemCount: posts.postImages.length,
+          itemBuilder: (ctx, j){
+            return Container(
+              color: Colors.white,
+              child: Image.network(posts.postImages[j]),
+            );
+          },
+        ),
+      );
+    }
+    else{
+      for(var x=0 ; x<posts.postImages.length ; x++){
+        return InkWell(
+          onDoubleTap: () {
+            setState(() {
+              posts.liked = !posts.liked;
+              print("Double Tap");
+            });
+          },
+
+          child: FadeInImage(
+            image: NetworkImage(posts.postImages[x]),
+            placeholder: AssetImage("assets/images/main.gif"),
+            width: _widthOfScreen,
+          ),
+        );
+      }
+    }
+  }
+
   get _buildPost{
     return Container(
       child: ListView.builder(
@@ -142,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.white,
             child: Column(
               children: <Widget>[
-                
+
                 // Profile Picture
                 Container(
                   padding: EdgeInsets.symmetric(
@@ -182,12 +228,34 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
+                postCheck(posts[i]),
                 // Image Post
-                FadeInImage(
-                  image: NetworkImage(posts[i].postImage),
-                  placeholder: AssetImage("assets/images/main.gif"),
-                  width: _widthOfScreen,
-                ),
+//                Container(
+//                  height: 400,
+//                  child: PageView.builder(
+//                    itemCount: posts[i].postImages.length,
+//                    itemBuilder: (ctx, j){
+//                      return Container(
+//                        color: Colors.white,
+//                        child: Image.network(posts[i].postImages[j]),
+//                      );
+//                    },
+//                  ),
+//                ),
+//                InkWell(
+//                  onDoubleTap: () {
+//                    setState(() {
+//                      posts[i].liked = !posts[i].liked;
+//                      print("Double Tap");
+//                    });
+//                  },
+//
+//                  child: FadeInImage(
+//                    image: NetworkImage(posts[i].postImage),
+//                    placeholder: AssetImage("assets/images/main.gif"),
+//                    width: _widthOfScreen,
+//                  ),
+//                ),
                 // Like Comment Send Button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -195,8 +263,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       children: <Widget>[
                         IconButton(
-                          onPressed: () {},
-                          icon: Icon(MaterialIcons.favorite_border, size: 30.0,),
+                          onPressed: () {
+                            setState(() {
+                              posts[i].liked = !posts[i].liked;
+                            });
+                          },
+                          icon: posts[i].liked ? Icon(MaterialIcons.favorite, size: 30.0, color: Colors.red,) : Icon(MaterialIcons.favorite_border, size: 30.0,),
+//                          icon: Icon(MaterialIcons.favorite_border, size: 30.0,),
                         ),
                         IconButton(
                           onPressed: () {},
